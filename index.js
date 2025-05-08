@@ -11,6 +11,10 @@ const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
 const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
+app.get('/', (req, res) => {
+    res.send('WhatsApp GPT Bot is running!');
+});
+
 // ✅ Verify webhook (Meta requirement)
 app.get('/webhook', (req, res) => {
     const mode = req.query['hub.mode'];
@@ -91,4 +95,4 @@ async function getGptReply(message) {
     }
 }
 
-app.listen(3000, () => console.log('Server running on port 3000'));
+app.listen(8080, () => console.log('Server running on port 8080'));
