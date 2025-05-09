@@ -40,8 +40,15 @@ app.post('/webhook', async (req, res) => {
         const from = message.from;
         const userMessage = message.text.body;
 
+        console.log("From:", from);
+        console.log("Message:", userMessage);
+        console.log("Phone Number ID:", phoneNumberId);
+        console.log("Time Stamp:", new Date().toISOString());
+
         // 🔁 Send user message to GPT
         const gptReply = await getGptReply(userMessage);
+
+        console.log("GPT Reply:", gptReply);
 
         // 🔁 Send GPT reply to WhatsApp
         await sendWhatsAppMessage(from, gptReply);
@@ -67,6 +74,7 @@ async function sendWhatsAppMessage(to, text) {
                 },
             }
         );
+        console.log(`Message sent to ${to}: ${text}`);
     } catch (err) {
         console.error('Error sending message:', err.response?.data || err.message);
     }
