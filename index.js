@@ -52,9 +52,9 @@ app.get('/webhook', (req, res) => {
 // ✅ Handle incoming WhatsApp messages
 app.post('/webhook', async (req, res) => {
 
-    console.log("Request", req);
+    // console.log("Request", req);
     console.log('Webhook POST called with body:', req.body);
-    console.log('Webhook POST called with headers:', req.headers);
+    // console.log('Webhook POST called with headers:', req.headers);
     const entry = req.body.entry?.[0];
     const changes = entry?.changes?.[0];
     const message = changes?.value?.messages?.[0];
