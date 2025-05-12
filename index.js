@@ -60,8 +60,8 @@ app.post('/webhook', async (req, res) => {
     const message = changes?.value?.messages?.[0];
     const phoneNumberId = changes?.value?.metadata?.phone_number_id;
 
-    console.log("From:", from);
-    console.log("Message:", userMessage);
+    console.log("From:", message?.from);
+    console.log("Message:", message?.userMessage);
     console.log("Phone Number ID:", phoneNumberId);
     console.log("Time Stamp:", new Date().toISOString());
 
