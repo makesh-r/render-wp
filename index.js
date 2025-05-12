@@ -51,10 +51,19 @@ app.get('/webhook', (req, res) => {
 
 // ✅ Handle incoming WhatsApp messages
 app.post('/webhook', async (req, res) => {
+
+    console.log("Request", req);
+    console.log('Webhook POST called with body:', req.body);
+    console.log('Webhook POST called with headers:', req.headers);
     const entry = req.body.entry?.[0];
     const changes = entry?.changes?.[0];
     const message = changes?.value?.messages?.[0];
     const phoneNumberId = changes?.value?.metadata?.phone_number_id;
+
+    console.log("From:", from);
+    console.log("Message:", userMessage);
+    console.log("Phone Number ID:", phoneNumberId);
+    console.log("Time Stamp:", new Date().toISOString());
 
     if (message) {
         const from = message.from;
@@ -106,7 +115,7 @@ async function getGptReply(message) {
         const res = await axios.post(
             'https://api.openai.com/v1/chat/completions',
             {
-                model: 'gpt-4',
+                model: 'gpt-4o',
                 messages: [{ role: 'user', content: message }],
             },
             {
