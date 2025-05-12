@@ -93,7 +93,7 @@ async function sendWhatsAppMessage(to, text) {
             `https://graph.facebook.com/v18.0/${PHONE_NUMBER_ID}/messages`,
             {
                 messaging_product: 'whatsapp',
-                to,
+                to: "919994822167",
                 text: { body: text },
             },
             {
