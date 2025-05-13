@@ -23,8 +23,6 @@ app.get('/webhook', (req, res) => {
 
     console.log('Webhook GET called with:');
     console.log('Mode:', mode);
-    console.log('Token:', token);
-    console.log('Expected token:', VERIFY_TOKEN);
     console.log('Challenge:', challenge);
 
     if (mode === 'subscribe' && token === VERIFY_TOKEN) {
@@ -36,25 +34,10 @@ app.get('/webhook', (req, res) => {
     }
 });
 
-// app.get('/webhook', (req, res) => {
-//     const mode = req.query['hub.mode'];
-//     const token = req.query['hub.verify_token'];
-//     const challenge = req.query['hub.challenge'];
-
-//     if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-//         console.log('WEBHOOK_VERIFIED');
-//         res.status(200).send(challenge);
-//     } else {
-//         res.sendStatus(403);
-//     }
-// });
-
 // ✅ Handle incoming WhatsApp messages
 app.post('/webhook', async (req, res) => {
 
-    // console.log("Request", req);
     console.log('Webhook POST called with body:', req.body);
-    // console.log('Webhook POST called with headers:', req.headers);
     const entry = req.body.entry?.[0];
     const changes = entry?.changes?.[0];
     const message = changes?.value?.messages?.[0];
@@ -93,7 +76,7 @@ async function sendWhatsAppMessage(to, text) {
             `https://graph.facebook.com/v18.0/${PHONE_NUMBER_ID}/messages`,
             {
                 messaging_product: 'whatsapp',
-                to: "919994822167",
+                to,
                 text: { body: text },
             },
             {
