@@ -99,6 +99,7 @@ async function getGptAssistantReply(message) {
     const headers = {
         Authorization: `Bearer ${OPENAI_API_KEY}`,
         'Content-Type': 'application/json',
+        'OpenAI-Beta': 'assistants=v2'
     };
 
     try {
