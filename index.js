@@ -10,6 +10,7 @@ const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
 const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const ASSISTANT_ID = process.env.ASSISTANT_ID;
 
 app.get('/', (req, res) => {
     res.send('WhatsApp GPT Bot is running!');
@@ -58,7 +59,8 @@ app.post('/webhook', async (req, res) => {
         console.log("Time Stamp:", new Date().toISOString());
 
         // 🔁 Send user message to GPT
-        const gptReply = await getGptReply(userMessage);
+        const gptReply = await getGptAssistantReply(userMessage);
+        // const gptReply = await getGptReply(userMessage);
 
         console.log("GPT Reply:", gptReply);
 
@@ -91,6 +93,70 @@ async function sendWhatsAppMessage(to, text) {
         console.error('Error sending message:', err.response?.data || err.message);
     }
 }
+
+async function getGptAssistantReply(message) {
+    const OPENAI_API_BASE = 'https://api.openai.com/v1';
+    const headers = {
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+    };
+
+    try {
+        // Step 1: Create a thread
+        const threadRes = await axios.post(`${OPENAI_API_BASE}/threads`, {}, { headers });
+        const threadId = threadRes.data.id;
+
+        // Step 2: Add a user message to the thread
+        await axios.post(
+            `${OPENAI_API_BASE}/threads/${threadId}/messages`,
+            {
+                role: 'user',
+                content: message,
+            },
+            { headers }
+        );
+
+        // Step 3: Create a run
+        const runRes = await axios.post(
+            `${OPENAI_API_BASE}/threads/${threadId}/runs`,
+            {
+                assistant_id: ASSISTANT_ID,
+            },
+            { headers }
+        );
+        const runId = runRes.data.id;
+
+        // Step 4: Poll the run until it completes
+        let runStatus = 'in_progress';
+        while (runStatus === 'in_progress' || runStatus === 'queued') {
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+            const statusRes = await axios.get(
+                `${OPENAI_API_BASE}/threads/${threadId}/runs/${runId}`,
+                { headers }
+            );
+            runStatus = statusRes.data.status;
+        }
+
+        if (runStatus !== 'completed') {
+            throw new Error(`Run failed with status: ${runStatus}`);
+        }
+
+        // Step 5: Retrieve messages
+        const messagesRes = await axios.get(
+            `${OPENAI_API_BASE}/threads/${threadId}/messages`,
+            { headers }
+        );
+
+        const messages = messagesRes.data.data;
+        const assistantReply = messages.find(msg => msg.role === 'assistant')?.content[0]?.text?.value;
+
+        return assistantReply?.trim() || 'No reply from assistant.';
+    } catch (err) {
+        console.error('Error calling OpenAI Assistant API:', err.response?.data || err.message);
+        return 'Sorry, there was an error processing your message.';
+    }
+}
+
 
 // 🔹 Get GPT response
 async function getGptReply(message) {
