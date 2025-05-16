@@ -1,6 +1,11 @@
 const axios = require('axios');
 const admin = require("firebase-admin");
 const { OPENAI_API_KEY, ASSISTANT_ID } = require('../config');
+const { FIREBASE_CONFIG } = require('../config');
+
+admin.initializeApp({
+    credential: admin.credential.cert(FIREBASE_CONFIG)
+});
 
 const db = admin.firestore();
 const OPENAI_API_BASE = 'https://api.openai.com/v1';
