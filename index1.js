@@ -158,6 +158,7 @@ async function getGptAssistantReply(message) {
     }
 }
 
+app.listen(8080, () => console.log('Server running on port 8080'));
 
 // 🔹 Get GPT response
 async function getGptReply(message) {
@@ -181,5 +182,3 @@ async function getGptReply(message) {
         return 'Sorry, there was an error processing your message.';
     }
 }
-
-app.listen(8080, () => console.log('Server running on port 8080'));
