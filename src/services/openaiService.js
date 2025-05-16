@@ -3,7 +3,7 @@ const admin = require("firebase-admin");
 const { OPENAI_API_KEY, ASSISTANT_ID } = require('../config');
 
 admin.initializeApp({
-    credential: admin.credential.cert("../etc/secrets/firbaseConfig.json"),
+    credential: admin.credential.cert("/etc/secrets/firebaseConfig.json"),
 });
 
 const db = admin.firestore();
