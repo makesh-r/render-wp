@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const admin = require('firebase-admin');
 const webhookRoutes = require('./routes/webhookRoutes');
-const { FIREBASE_CONFIG } = require('../config');
+const { FIREBASE_CONFIG } = require('./config');
 
 admin.initializeApp({
     credential: admin.credential.cert(FIREBASE_CONFIG)
