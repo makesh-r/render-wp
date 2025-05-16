@@ -8,6 +8,11 @@ admin.initializeApp({
 
 const db = admin.firestore();
 const OPENAI_API_BASE = 'https://api.openai.com/v1';
+const headers = {
+    Authorization: `Bearer ${OPENAI_API_KEY}`,
+    'Content-Type': 'application/json',
+    'OpenAI-Beta': 'assistants=v2'
+};
 
 async function getOrCreateThreadId(numberId, botId) {
     // Step 1: Check Firestore for existing thread
@@ -45,12 +50,6 @@ async function getOrCreateThreadId(numberId, botId) {
 }
 
 async function getGptAssistantReply(message, numberId, botId) {
-
-    const headers = {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-        'OpenAI-Beta': 'assistants=v2'
-    };
 
     try {
 
