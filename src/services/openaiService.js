@@ -7,6 +7,7 @@ admin.initializeApp({
 });
 
 const db = admin.firestore();
+
 const OPENAI_API_BASE = 'https://api.openai.com/v1';
 const headers = {
     Authorization: `Bearer ${OPENAI_API_KEY}`,
@@ -107,90 +108,25 @@ async function getGptAssistantReply(message, numberId, botId) {
     }
 }
 
-// async function getGptAssistantReply(message) {
-//     const OPENAI_API_BASE = 'https://api.openai.com/v1';
-//     const headers = {
-//         Authorization: `Bearer ${OPENAI_API_KEY}`,
-//         'Content-Type': 'application/json',
-//         'OpenAI-Beta': 'assistants=v2'
-//     };
-
-//     try {
-//         // Step 1: Create a thread
-//         const threadRes = await axios.post(`${OPENAI_API_BASE}/threads`, {}, { headers });
-//         const threadId = threadRes.data.id;
-
-//         // Step 2: Add a user message to the thread
-//         await axios.post(
-//             `${OPENAI_API_BASE}/threads/${threadId}/messages`,
-//             {
-//                 role: 'user',
-//                 content: message,
-//             },
-//             { headers }
-//         );
-
-//         // Step 3: Create a run
-//         const runRes = await axios.post(
-//             `${OPENAI_API_BASE}/threads/${threadId}/runs`,
-//             {
-//                 assistant_id: ASSISTANT_ID,
-//             },
-//             { headers }
-//         );
-//         const runId = runRes.data.id;
-
-//         // Step 4: Poll the run until it completes
-//         let runStatus = 'in_progress';
-//         while (runStatus === 'in_progress' || runStatus === 'queued') {
-//             await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
-//             const statusRes = await axios.get(
-//                 `${OPENAI_API_BASE}/threads/${threadId}/runs/${runId}`,
-//                 { headers }
-//             );
-//             runStatus = statusRes.data.status;
-//         }
-
-//         if (runStatus !== 'completed') {
-//             throw new Error(`Run failed with status: ${runStatus}`);
-//         }
-
-//         // Step 5: Retrieve messages
-//         const messagesRes = await axios.get(
-//             `${OPENAI_API_BASE}/threads/${threadId}/messages`,
-//             { headers }
-//         );
-
-//         const messages = messagesRes.data.data;
-//         const assistantReply = messages.find(msg => msg.role === 'assistant')?.content[0]?.text?.value;
-
-//         return assistantReply?.trim() || 'No reply from assistant.';
-//     } catch (err) {
-//         console.error('Error calling OpenAI Assistant API:', err.response?.data || err.message);
-//         return 'Sorry, there was an error processing your message.';
-//     }
-// }
-
-async function getGptReply(message) {
+async function generateEmailReply(body) {
     try {
-        const res = await axios.post(
-            'https://api.openai.com/v1/chat/completions',
+        const response = await axios.post(
+            `${OPENAI_API_BASE}/chat/completions`,
             {
-                model: 'gpt-4o',
-                messages: [{ role: 'user', content: message }],
+                model: 'gpt-4',
+                messages: [
+                    { role: 'system', content: 'Reply to this email in a helpful and professional tone.' },
+                    { role: 'user', content: body }
+                ]
             },
-            {
-                headers: {
-                    Authorization: `Bearer ${OPENAI_API_KEY}`,
-                    'Content-Type': 'application/json',
-                },
-            }
+            { headers }
         );
-        return res.data.choices[0].message.content.trim();
-    } catch (err) {
-        console.error('Error calling OpenAI:', err.response?.data || err.message);
-        return 'Sorry, there was an error processing your message.';
+
+        return response.data.choices[0].message.content;
+    } catch (error) {
+        console.error('Error generating email reply:', error.response?.data || error.message);
+        return null;
     }
 }
 
-module.exports = { getGptAssistantReply, getGptReply };
+module.exports = { getGptAssistantReply, generateEmailReply };

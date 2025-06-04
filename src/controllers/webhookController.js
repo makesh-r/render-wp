@@ -22,7 +22,6 @@ async function handleWebhook(req, res) {
     const message = changes?.value?.messages?.[0];
     const phoneNumberId = changes?.value?.metadata?.phone_number_id;
 
-
     if (message) {
         const from = message.from;
         const userMessage = message.text.body;
