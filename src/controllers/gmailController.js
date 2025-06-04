@@ -3,6 +3,7 @@ const { generateEmailReply } = require('../services/openaiService');
 
 async function handleGmailWebhook(req, res) {
     try {
+        console.log("req.body.message?.data: ", req.body.message?.data);
         const historyId = req.body.message?.data
             ? parseInt(Buffer.from(req.body.message.data, 'base64').toString())
             : null;

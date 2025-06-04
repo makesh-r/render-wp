@@ -11,6 +11,6 @@ app.get('/', (req, res) => res.send('WhatsApp Bot is running!'));
 
 app.use('/', webhookRoutes);
 app.use('/auth', authRoutes);
-app.use("/gmail-webhook", gmailRoutes);
+app.use("/gmail", gmailRoutes);
 
 module.exports = app;
