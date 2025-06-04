@@ -69,7 +69,7 @@ async function handleGmailWebhook(req, res) {
         // Step 2: Send to LLM
         const llmResponse = generateEmailReply(body);
 
-        const replyText = llmResponse.data.choices[0].message.content;
+        const replyText = llmResponse;
 
         console.log("Email reply:", replyText);
 
