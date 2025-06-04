@@ -4,9 +4,24 @@ const { generateEmailReply } = require('../services/openaiService');
 async function handleGmailWebhook(req, res) {
     try {
         console.log("req.body.message?.data: ", req.body.message?.data);
-        const historyId = req.body.message?.data
-            ? parseInt(Buffer.from(req.body.message.data, 'base64').toString())
+        const decodedData = req.body.message?.data
+            ? JSON.parse(Buffer.from(req.body.message.data, 'base64').toString())
             : null;
+
+        console.log("Decoded message data:", decodedData);
+
+        if (!decodedData?.historyId) {
+            console.log("Missing historyId in decoded message");
+            return res.status(400).send('Missing historyId');
+        }
+
+        const historyId = parseInt(decodedData.historyId);
+        const emailAddress = decodedData.emailAddress;
+
+
+        // const historyId = req.body.message?.data
+        //     ? parseInt(Buffer.from(req.body.message.data, 'base64').toString())
+        //     : null;
 
         if (!historyId) {
             console.log("Missing historyId in request body");
