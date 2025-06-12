@@ -31,8 +31,8 @@ async function handleWebhook(req, res) {
 
         try {
             const querySnapshot = await db.collection("threadMap")
-                .where("numberId", "==", numberId)
-                .where("botId", "==", botId)
+                .where("numberId", "==", from)
+                .where("botId", "==", phoneNumberId)
                 .limit(1)
                 .get();
 
@@ -44,6 +44,8 @@ async function handleWebhook(req, res) {
                 ),
                 lastUpdated: admin.firestore.FieldValue.serverTimestamp()
             });
+            console.log("User", from, ":", userMessage);
+            console.log("Assistant", reply);
         } catch (error) {
             console.log("Error updating threadMap", error);
         }
