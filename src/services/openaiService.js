@@ -130,4 +130,23 @@ async function generateEmailReply(body) {
     }
 }
 
-module.exports = { getGptAssistantReply, generateEmailReply, db };
+async function updateThreadHistory(from, phoneNumberId, userMessage, reply) {
+    const querySnapshot = await db.collection("threadMap")
+        .where("numberId", "==", from)
+        .where("botId", "==", phoneNumberId)
+        .limit(1)
+        .get();
+
+    const docRef = querySnapshot.docs[0].ref;
+    await docRef.update({
+        history: admin.firestore.FieldValue.arrayUnion(
+            { role: "user", content: userMessage },
+            { role: "assistant", content: reply }
+        ),
+        lastUpdated: admin.firestore.FieldValue.serverTimestamp()
+    });
+    console.log("User", from, ":", userMessage);
+    console.log("Assistant", reply);
+}
+
+module.exports = { getGptAssistantReply, generateEmailReply, updateThreadHistory };

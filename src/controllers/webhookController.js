@@ -1,16 +1,7 @@
-const admin = require("firebase-admin");
-
 const { VERIFY_TOKEN } = require('../config');
-// const { db } = require('../lib/firebaseAdmin');
 
-const { getGptAssistantReply } = require('../services/openaiService');
+const { getGptAssistantReply, updateThreadHistory } = require('../services/openaiService');
 const { sendWhatsAppMessage } = require('../services/whatsappService');
-
-admin.initializeApp({
-    credential: admin.credential.cert("/etc/secrets/firebaseConfig.json"),
-});
-
-const db = admin.firestore();
 
 async function verifyWebhook(req, res) {
     const mode = req.query['hub.mode'];
@@ -39,22 +30,7 @@ async function handleWebhook(req, res) {
         await sendWhatsAppMessage(from, reply);
 
         try {
-            const querySnapshot = await db.collection("threadMap")
-                .where("numberId", "==", from)
-                .where("botId", "==", phoneNumberId)
-                .limit(1)
-                .get();
-
-            const docRef = querySnapshot.docs[0].ref;
-            await docRef.update({
-                history: admin.firestore.FieldValue.arrayUnion(
-                    { role: "user", content: userMessage },
-                    { role: "assistant", content: reply }
-                ),
-                lastUpdated: admin.firestore.FieldValue.serverTimestamp()
-            });
-            console.log("User", from, ":", userMessage);
-            console.log("Assistant", reply);
+            await updateThreadHistory(from, phoneNumberId, userMessage, reply);
         } catch (error) {
             console.log("Error updating threadMap", error);
         }
