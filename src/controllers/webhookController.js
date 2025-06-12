@@ -1,6 +1,6 @@
 const { VERIFY_TOKEN } = require('../config');
-const { db } = require('../lib/firebaseAdmin');
-const { getGptAssistantReply } = require('../services/openaiService');
+// const { db } = require('../lib/firebaseAdmin');
+const { getGptAssistantReply, db } = require('../services/openaiService');
 const { sendWhatsAppMessage } = require('../services/whatsappService');
 
 async function verifyWebhook(req, res) {

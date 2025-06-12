@@ -1,9 +1,9 @@
-const admin = require("firebase-admin");
+// const admin = require("firebase-admin");
 
-if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert("/etc/secrets/firebaseConfig.json"),
-    });
-}
+// if (!admin.apps.length) {
+//     admin.initializeApp({
+//         credential: admin.credential.cert("/etc/secrets/firebaseConfig.json"),
+//     });
+// }
 
-export const db = admin.firestore();
+// export const db = admin.firestore();
