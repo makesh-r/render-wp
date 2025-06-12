@@ -1,4 +1,5 @@
 const { VERIFY_TOKEN } = require('../config');
+const { db } = require('../lib/firebaseAdmin');
 const { getGptAssistantReply } = require('../services/openaiService');
 const { sendWhatsAppMessage } = require('../services/whatsappService');
 
@@ -27,6 +28,25 @@ async function handleWebhook(req, res) {
         const userMessage = message.text.body;
         const reply = await getGptAssistantReply(userMessage, from, phoneNumberId);
         await sendWhatsAppMessage(from, reply);
+
+        try {
+            const querySnapshot = await db.collection("threadMap")
+                .where("numberId", "==", numberId)
+                .where("botId", "==", botId)
+                .limit(1)
+                .get();
+
+            const docRef = querySnapshot.docs[0].ref;
+            await docRef.update({
+                history: admin.firestore.FieldValue.arrayUnion(
+                    { role: "user", content: userMessage },
+                    { role: "assistant", content: reply }
+                ),
+                lastUpdated: admin.firestore.FieldValue.serverTimestamp()
+            });
+        } catch (error) {
+            console.log("Error updating threadMap", error);
+        }
     }
 
     res.sendStatus(200);
