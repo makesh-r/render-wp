@@ -1,7 +1,16 @@
+const admin = require("firebase-admin");
+
 const { VERIFY_TOKEN } = require('../config');
 // const { db } = require('../lib/firebaseAdmin');
-const { getGptAssistantReply, db } = require('../services/openaiService');
+
+const { getGptAssistantReply } = require('../services/openaiService');
 const { sendWhatsAppMessage } = require('../services/whatsappService');
+
+admin.initializeApp({
+    credential: admin.credential.cert("/etc/secrets/firebaseConfig.json"),
+});
+
+const db = admin.firestore();
 
 async function verifyWebhook(req, res) {
     const mode = req.query['hub.mode'];
