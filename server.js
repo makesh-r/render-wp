@@ -1,6 +1,6 @@
 const app = require('./src/app.js');
 // const { google } = require('googleapis');
-// const { PORT, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI, GOOGLE_REFRESH_TOKEN } = require('./src/config/index.js');
+const { PORT, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI, GOOGLE_REFRESH_TOKEN } = require('./src/config/index.js');
 
 // const oAuth2Client = new google.auth.OAuth2(
 //     GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI
